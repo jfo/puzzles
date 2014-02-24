@@ -20,15 +20,6 @@ class Hash
   end
 end
 
-def dead_board?
-
-  @board.keys.each do |cell|
-    return false if safe?(cell)
-  end
-  raise StandardError
-
-end
-
 def safe?(board, cell)
 
   if check_x(board, cell).values.include?(true) ||

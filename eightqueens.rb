@@ -15,9 +15,11 @@ end
 def generic_check(board, cell, check)
   mates = []
   @all_coords.each do |coord|
-    mates << board[coord] if check.call(cell, coord)
+    if check.call(cell, coord) && board[coord]
+      return true
+    end
   end
-  mates
+  false
 end
 
 def safe?(board, cell)
@@ -26,10 +28,10 @@ def safe?(board, cell)
   check_45 = lambda{|cell, other| (cell[0] - cell[1]) == (other[0] - other[1])}
   check_135 = lambda{|cell, other| (cell[0] + cell[1]) == (other[0] + other[1])}
 
-  if generic_check(board, cell, check_x).include?(true) ||
-     generic_check(board, cell, check_y).include?(true) ||
-     generic_check(board, cell, check_45).include?(true) ||
-     generic_check(board, cell, check_135).include?(true)
+  if generic_check(board, cell, check_x) ||
+     generic_check(board, cell, check_y) ||
+     generic_check(board, cell, check_45) ||
+     generic_check(board, cell, check_135)
       false
   else
     true

@@ -12,16 +12,6 @@ def new_board
   end
 end
 
-def generic_check(board, cell, checks)
-  @all_coords.each do |coord|
-    results = checks.map{|proc| proc.call(cell, coord)}
-    if results.any? && board[coord]
-      return false
-    end
-  end
-  true
-end
-
 def safe?(board, cell)
   checks = []
   checks << lambda{|cell, other| cell[0] == other[0]}
@@ -29,7 +19,13 @@ def safe?(board, cell)
   checks << lambda{|cell, other| (cell[0] - cell[1]) == (other[0] - other[1])}
   checks << lambda{|cell, other| (cell[0] + cell[1]) == (other[0] + other[1])}
 
-  generic_check(board, cell, checks)
+  @all_coords.each do |coord|
+    results = checks.map{|proc| proc.call(cell, coord)}
+    if results.any? && board[coord]
+      return false
+    end
+  end
+  true
 end
 
 

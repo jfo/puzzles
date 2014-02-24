@@ -52,14 +52,9 @@ def print_board(board)
 end
 
 def iter_place_queens(input, queen_number = 0)
-  system('clear')
-  print_board(input)
 
   if queen_number == 8
     @wins << input
-    puts "win!"
-    print_board(input)
-    gets
     return nil
   end
 
@@ -72,8 +67,8 @@ def iter_place_queens(input, queen_number = 0)
       iter_place_queens(board, queen_number + 1)
     end
   end
-
 end
+
 
 system('clear')
 new_board
@@ -81,3 +76,4 @@ iter_place_queens(@board)
 for board in @wins
   print_board(board)
 end
+print "number of wins:", @wins.length

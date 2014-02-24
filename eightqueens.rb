@@ -12,12 +12,24 @@ def new_board
   end
 end
 
-def safe?(board, cell)
+def generic_check(board, cell, check)
+  mates = []
+  @all_coords.each do |coord|
+    mates << board[coord] if check.call(cell, coord)
+  end
+  mates
+end
 
-  if check_x(board, cell).values.include?(true) ||
-     check_y(board, cell).values.include?(true) ||
-     check_45(board, cell).values.include?(true) ||
-     check_135(board, cell).values.include?(true)
+def safe?(board, cell)
+  check_x = lambda{|cell, other| cell[0] == other[0]}
+  check_y = lambda{|cell, other| cell[1] == other[1]}
+  check_45 = lambda{|cell, other| (cell[0] - cell[1]) == (other[0] - other[1])}
+  check_135 = lambda{|cell, other| (cell[0] + cell[1]) == (other[0] + other[1])}
+
+  if generic_check(board, cell, check_x).include?(true) ||
+     generic_check(board, cell, check_y).include?(true) ||
+     generic_check(board, cell, check_45).include?(true) ||
+     generic_check(board, cell, check_135).include?(true)
       false
   else
     true
@@ -25,49 +37,6 @@ def safe?(board, cell)
 
 end
 
-
-def check_x(board, cell)
-  # for a given coord, return a sub hash of all the spots on its x axis
-  x_mates = {}
-
-  @all_coords.each do |coords|
-    x_mates[coords] = board[coords] if cell[0] == coords[0]
-  end
-
-  x_mates
-end
-
-
-def check_y(board, cell)
-
-  x_mates = {}
-
-  @all_coords.each do |coords|
-    x_mates[coords] = board[coords] if cell[1] == coords[1]
-  end
-
-  x_mates
-end
-
-
-def check_45(board,  cell)
-  ff_mates = {}
-
-  @all_coords.each do |coords|
-    ff_mates[coords] = board[coords] if (cell[0] - cell[1]) == (coords[0] - coords[1])
-  end
-  ff_mates
-end
-
-
-def check_135(board, cell)
-  otf_mates = {}
-
-  @all_coords.each do |coords|
-    otf_mates[coords] = board[coords] if (cell[0] + cell[1]) == (coords[0] + coords[1])
-  end
-  otf_mates
-end
 
 def print_board(board)
 

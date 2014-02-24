@@ -17,8 +17,8 @@ def safe?(board, cell)
   if check_x(board, cell).values.include?(true) ||
      check_y(board, cell).values.include?(true) ||
      check_45(board, cell).values.include?(true) ||
-     check_135(board, cell).values.include?(true) ||
-    false
+     check_135(board, cell).values.include?(true)
+      false
   else
     true
   end

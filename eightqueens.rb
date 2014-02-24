@@ -12,14 +12,6 @@ def new_board
   end
 end
 
-
-class Hash
-  def except!(*keys)
-    keys.each { |key| delete(key) }
-    self
-  end
-end
-
 def safe?(board, cell)
 
   if check_x(board, cell).values.include?(true) ||
@@ -42,7 +34,7 @@ def check_x(board, cell)
     x_mates[coords] = board[coords] if cell[0] == coords[0]
   end
 
-  x_mates.except!(cell)
+  x_mates
 end
 
 
@@ -54,7 +46,7 @@ def check_y(board, cell)
     x_mates[coords] = board[coords] if cell[1] == coords[1]
   end
 
-  x_mates.except!(cell)
+  x_mates
 end
 
 

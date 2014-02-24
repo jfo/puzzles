@@ -1,4 +1,6 @@
-require 'pry'
+
+# The eight queens puzzle is the problem of placing eight chess queens on an 8×8 chessboard so that no two queens attack each other.
+# Thus, a solution requires that no two queens share the same row, column, or diagonal.
 
 @wins = []
 @all_coords = Array(0..7).product(Array(0..7))
@@ -27,9 +29,7 @@ def safe?(board, cell)
   true
 end
 
-
 def print_board(board)
-
   x = 0
   y = 0
   until x == 8
@@ -40,7 +40,7 @@ def print_board(board)
         if safe?(board, [x,y]) == true
           print '. '
         else
-          print 'X '
+          print '. '
         end
       end
     y+=1
@@ -52,7 +52,6 @@ def print_board(board)
 end
 
 def iter_place_queens(input, queen_number = 0)
-
   if queen_number == 8
     @wins << input
     return nil
@@ -75,5 +74,6 @@ new_board
 iter_place_queens(@board)
 for board in @wins
   print_board(board)
+  puts
 end
-print "number of wins:", @wins.length
+print "number of wins: ", @wins.length

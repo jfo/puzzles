@@ -51,24 +51,25 @@ def print_board(board)
   end
 end
 
-def iter_place_queens(input, count = 0)
+def iter_place_queens(input, queen_number = 0)
   system('clear')
   print_board(input)
-  sleep 0.05
 
-  if count == 8
+  if queen_number == 8
     @wins << input
-    print "win!"
+    puts "win!"
+    print_board(input)
     gets
     return nil
   end
 
-  input.keys.each do |index|
+  row = input.keys[queen_number*8...(queen_number+1)*8]
+  row.each do |index|
     board = input.dup
     if safe?(board, index)
       board[index] = true
       # puts "we have to go deeper"
-      iter_place_queens(board, count + 1)
+      iter_place_queens(board, queen_number + 1)
     end
   end
 

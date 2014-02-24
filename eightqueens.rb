@@ -85,8 +85,6 @@ def print_board(board)
     until y == 8
       if board[[x,y]] == true
         print "Q "
-      elsif board[[x,y]] == false
-        print 'D '
       else
         if safe?(board, [x,y]) == true
           print '. '

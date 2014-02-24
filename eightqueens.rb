@@ -1,6 +1,5 @@
 require 'pry'
 
-@i = 0
 @wins = []
 @all_coords = Array(0..7).product(Array(0..7))
 
@@ -53,8 +52,6 @@ def print_board(board)
 end
 
 def iter_place_queens(input, count = 0)
-
-  puts "=============================="
   system('clear')
   print_board(input)
   sleep 0.05

@@ -65,20 +65,11 @@ def iter_place_queens(input, count = 0)
 
   input.keys.each do |index|
     board = input.dup
-    if place_queen(board, index)
+    if safe?(board, index)
+      board[index] = true
+      # puts "we have to go deeper"
       iter_place_queens(board, count + 1)
     end
-  end
-end
-
-
-def place_queen(board, ix)
-
-  if safe?(board, ix)
-    board[ix] = true
-    return true
-  else
-    return false
   end
 
 end

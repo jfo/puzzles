@@ -55,8 +55,7 @@ def get_friends(co)
     acc << cand if co[1] == cand[1]
   end
   return_square(co).each {|e| acc << e}
-
-  acc.uniq
+  acc
 end
 
 def cell_poss(puzzle, co)
@@ -71,7 +70,37 @@ def cell_poss(puzzle, co)
   else
     poss
   end
+end
 
+def all_cell_poss(puzzle, co)
+  acc = []
+
+  test = get_friends(co)
+  test.delete co
+  # binding.pry
+
+  test.each do |friend|
+    acc << puzzle[friend]
+  end
+  poss = [0,1,2,3,4,5,6,7,8,9] - acc.uniq
+  poss
+end
+
+def dead_puzzle?(puzzle)
+
+  if all_poss(puzzle).values.include? []
+    return true
+  end
+
+  puzzle.each do |k,v|
+    if v != 0
+      test = all_cell_poss(puzzle, k)
+      if !test.include?(v)
+        return true
+      end
+    end
+  end
+  return false
 end
 
 def print_puzzle(puzzle)
@@ -87,16 +116,21 @@ def print_puzzle(puzzle)
   end
 end
 
+
 def deterministic_solve(puzzle)
-  acc = {}
+
+  if dead_puzzle?(puzzle)
+    puts "dead!"
+    raise BackTrack
+  end
+
+  acc = Marshal.load(Marshal.dump(puzzle))
 
   puzzle.each_key do |k|
-    if cell_poss(puzzle, k).length == 1 && puzzle[k] == 0
-      val = cell_poss(puzzle, k).first
-      binding.pry if val.nil?
+    if cell_poss(acc, k).length == 1
+      val = cell_poss(acc, k).first
       acc[k] = val
     else
-      binding.pry if puzzle[k].nil?
       acc[k] = puzzle[k]
     end
   end
@@ -133,28 +167,31 @@ end
 def make_move(puzzle, move)
   binding.pry if move[1].nil?
   puzzle[move[0]] = move[1]
+
+  if dead_puzzle?(puzzle)
+    "Dead puzzle!"
+    raise BackTrack
+  end
+
+  print_puzzle puzzle
+  puts "================="
+
   puzzle
 end
 
 def try_moves(puzzle, moves)
-  if moves.empty?
-    # puts "dead end"
-    raise BackTrack
-  else
-    next_puzzle = make_move(puzzle, moves.first)
-    begin
-      print_puzzle next_puzzle
-      puts
-      solve next_puzzle
-    rescue BackTrack
-      try_moves(puzzle, moves[1..-1])
-    end
+  next_puzzle = make_move(puzzle, moves.first)
+  begin
+    solve next_puzzle
+  rescue BackTrack
+    @recursions += 1
+    try_moves(puzzle, moves[1..-1])
   end
 end
 
 
 def solve(puzzle)
-  binding.pry if puzzle.values.include? nil
+
   new_puzzle = deterministic_solve puzzle
   if !new_puzzle.values.include? 0
     return new_puzzle
@@ -171,8 +208,13 @@ x = get_puzzle 3
   @test_puzzle[i] = @test.shift.to_i
 end
 
+
+@recursions = 0
 print_puzzle(x)
 # print_puzzle(deterministic_solve(@test_puzzle))
+#
 puts
+
 print_puzzle(solve x)
+puts "Recursions: #{@recursions}"
 

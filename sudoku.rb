@@ -1,8 +1,12 @@
 require 'nokogiri'
 require 'open-uri'
-require 'pry'
+require 'pry-debugger'
 
 @coords = (0..8).to_a.product((0..8).to_a)
+
+class BackTrack < StandardError
+end
+
 
 def parse_page(page)
   (1..81).each_with_object([]) do |index, values|
@@ -73,11 +77,11 @@ end
 def print_puzzle(puzzle)
   puzzle.values.each_slice(9).to_a.each do |a|
     a.each do |e|
-      if e == 0
-        print '. '
-      else
+      # if e == 0
+      #   print '. '
+      # else
         print e.to_s + ' '
-      end
+      # end
     end
     print "\n"
   end
@@ -88,8 +92,11 @@ def deterministic_solve(puzzle)
 
   puzzle.each_key do |k|
     if cell_poss(puzzle, k).length == 1 && puzzle[k] == 0
-      acc[k] = cell_poss(puzzle, k)[0]
+      val = cell_poss(puzzle, k).first
+      binding.pry if val.nil?
+      acc[k] = val
     else
+      binding.pry if puzzle[k].nil?
       acc[k] = puzzle[k]
     end
   end
@@ -97,6 +104,7 @@ def deterministic_solve(puzzle)
   if acc == puzzle
     return acc
   else
+    binding.pry if acc.values.include? nil
     deterministic_solve(acc)
   end
 
@@ -110,22 +118,60 @@ def all_poss(puzzle)
   acc
 end
 
+def list_moves(puzzle)
+  acc = []
+  all = all_poss(puzzle).sort_by {|k,v| v.length}
+  all.reject! {|k,v| v.length == 1}
+  all.each do |k, v|
+    v.each do |e|
+      acc << [k,e]
+    end
+  end
+  acc
+end
 
-def solve(puzzle, tried = nil)
+def make_move(puzzle, move)
+  binding.pry if move[1].nil?
+  puzzle[move[0]] = move[1]
+  puzzle
+end
+
+def try_moves(puzzle, moves)
+  if moves.empty?
+    # puts "dead end"
+    raise BackTrack
+  else
+    next_puzzle = make_move(puzzle, moves.first)
+    begin
+      binding.pry if next_puzzle.values.include? nil
+      solve next_puzzle
+    rescue BackTrack
+      try_moves(puzzle, moves[1..-1])
+    end
+  end
+end
+
+
+def solve(puzzle)
+  binding.pry if puzzle.values.include? nil
   new_puzzle = deterministic_solve puzzle
   if !new_puzzle.values.include? 0
     return new_puzzle
   else
-    all_poss(new_puzzle)
+    try_moves(new_puzzle, list_moves(new_puzzle))
   end
-
 end
 
-x = get_puzzle 2
+x = get_puzzle 3
+
+@test_puzzle = {}
+@test = "4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......".gsub(".","0").split('')
+@coords.each do |i|
+  @test_puzzle[i] = @test.shift.to_i
+end
+
 print_puzzle(x)
+# print_puzzle(deterministic_solve(@test_puzzle))
 puts
-print_puzzle(deterministic_solve(x))
-puts
-p solve x
-puts
+print_puzzle(solve x)
 

@@ -1,7 +1,5 @@
-
 # The eight queens puzzle is the problem of placing eight chess queens on an 8×8 chessboard so that no two queens attack each other.
 # Thus, a solution requires that no two queens share the same row, column, or diagonal.
-
 @wins = []
 @all_coords = Array(0..7).product(Array(0..7))
 

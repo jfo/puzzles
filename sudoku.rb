@@ -60,17 +60,30 @@ def cell_poss(puzzle, co)
   get_friends(co).each do |friend|
     acc << puzzle[friend]
   end
-  [1,2,3,4,5,6,7,8,9] - acc.uniq.reject{|e|e==0}
+  poss = [1,2,3,4,5,6,7,8,9] - acc.uniq.reject{|e|e==0}
+
+  if puzzle[[co[0],co[1]]] != 0
+    [puzzle[[co[0],co[1]]]]
+  else
+    poss
+  end
+
 end
 
 def print_puzzle(puzzle)
-  puzzle.values.each do |e|
-    print e
+  puzzle.values.each_slice(9).to_a.each do |a|
+    a.each do |e|
+      if e == 0
+        print '. '
+      else
+        print e.to_s + ' '
+      end
+    end
+    print "\n"
   end
 end
 
 def deterministic_solve(puzzle)
-
   acc = {}
 
   puzzle.each_key do |k|
@@ -81,57 +94,38 @@ def deterministic_solve(puzzle)
     end
   end
 
-  return acc if acc == puzzle
-  deterministic_solve(acc)
+  if acc == puzzle
+    return acc
+  else
+    deterministic_solve(acc)
+  end
+
 end
 
-def make_move(puzzle, move)
-  puzzle[move[0]] = move[1]
-  puzzle
-end
-
-def allposs(puzzle)
+def all_poss(puzzle)
   acc = {}
   puzzle.each_key do |k|
     acc[k] = cell_poss(puzzle, k)
   end
-  acc2 = []
-  acc.each do |k,v|
-    v.each do |e|
-      acc2 << [k,e]
-    end
+  acc
+end
+
+
+def solve(puzzle, tried = nil)
+  new_puzzle = deterministic_solve puzzle
+  if !new_puzzle.values.include? 0
+    return new_puzzle
+  else
+    all_poss(new_puzzle)
   end
-  acc2.sort_by {|k, v| acc[k].length }
-end
 
-def try_moves(puzzle, moves)
-   if moves.empty?
-    raise Exception.new("nope!")
-   else
-     p "hi"
-    next_puzzle = make_move(puzzle, moves.shift)
-    begin
-      solve(next_puzzle)
-    rescue Exception
-      try_moves(puzzle, moves)
-    end
-  end
 end
-
-def solve(puzzle)
-  new_puzzle = deterministic_solve(puzzle)
-  return new_puzzle if !new_puzzle.values.include? 0
-  try_moves(new_puzzle, allposs(new_puzzle))
-end
-
 
 x = get_puzzle 2
-p allposs(deterministic_solve(x))
-
 print_puzzle(x)
 puts
 print_puzzle(deterministic_solve(x))
 puts
-print_puzzle(solve(x))
-# p allposs(x)
+p solve x
+puts
 

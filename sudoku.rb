@@ -77,11 +77,11 @@ end
 def print_puzzle(puzzle)
   puzzle.values.each_slice(9).to_a.each do |a|
     a.each do |e|
-      # if e == 0
-      #   print '. '
-      # else
+      if e == 0
+        print '. '
+      else
         print e.to_s + ' '
-      # end
+      end
     end
     print "\n"
   end
@@ -143,7 +143,8 @@ def try_moves(puzzle, moves)
   else
     next_puzzle = make_move(puzzle, moves.first)
     begin
-      binding.pry if next_puzzle.values.include? nil
+      print_puzzle next_puzzle
+      puts
       solve next_puzzle
     rescue BackTrack
       try_moves(puzzle, moves[1..-1])

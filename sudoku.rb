@@ -133,9 +133,9 @@ def deterministic_solve(puzzle)
     end
   end
 
-  system "clear"
-  print_puzzle acc
-  puts
+  # system "clear"
+  # print_puzzle acc
+  # puts
 
   if acc == puzzle
     return acc
@@ -175,20 +175,22 @@ def make_move(puzzle, move)
     raise BackTrack
   end
 
-  system "clear"
-  print_puzzle puzzle
+  # system "clear"
+  # print_puzzle puzzle
   # puts "================="
-  puts
+  # puts
 
   puzzle
 end
 
 def try_moves(puzzle, moves)
+  if moves.empty?
+    raise BackTrack
+  end
   next_puzzle = make_move(puzzle, moves.first)
   begin
     solve next_puzzle
   rescue BackTrack
-    @recursions += 1
     try_moves(puzzle, moves[1..-1])
   end
 end
@@ -204,20 +206,20 @@ def solve(puzzle)
   end
 end
 
-x = get_puzzle 3
+# x = get_puzzle 3
 
-@test_puzzle = {}
-@test = "4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......".gsub(".","0").split('')
-@coords.each do |i|
-  @test_puzzle[i] = @test.shift.to_i
-end
+# @test_puzzle = {}
+# @test = "4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......".gsub(".","0").split('')
+# @coords.each do |i|
+#   @test_puzzle[i] = @test.shift.to_i
+# end
 
 
-@recursions = 0
-# print_puzzle(deterministic_solve(@test_puzzle))
-#
-puts
+# @recursions = 0
+# # print_puzzle(deterministic_solve(@test_puzzle))
+# #
+# puts
 
-solve x
-puts "Recursions: #{@recursions}"
+# solve x
+# puts "Recursions: #{@recursions}"
 

@@ -17,7 +17,13 @@ def parse_page(page)
 end
 
 def get_puzzle(difficulty = 1)
-  page = Nokogiri::HTML(open("http://www.free-sudoku.com/sudoku.php?mode=#{difficulty}"))
+
+  if difficulty.class == String
+    page = Nokogiri::HTML(open("http://www.free-sudoku.com/sudoku.php?dchoix=evil"))
+  else
+    page = Nokogiri::HTML(open("http://www.free-sudoku.com/sudoku.php?mode=#{difficulty}"))
+  end
+
   boardarray = parse_page(page).split('')
 
   acc = {}
@@ -133,9 +139,9 @@ def deterministic_solve(puzzle)
     end
   end
 
-  # system "clear"
-  # print_puzzle acc
-  # puts
+  system "clear"
+  print_puzzle acc
+  puts
 
   if acc == puzzle
     return acc
@@ -167,7 +173,6 @@ def list_moves(puzzle)
 end
 
 def make_move(puzzle, move)
-  binding.pry if move[1].nil?
   puzzle[move[0]] = move[1]
 
   if dead_puzzle?(puzzle)
@@ -175,10 +180,10 @@ def make_move(puzzle, move)
     raise BackTrack
   end
 
-  # system "clear"
-  # print_puzzle puzzle
+  system "clear"
+  print_puzzle puzzle
   # puts "================="
-  # puts
+  puts
 
   puzzle
 end
@@ -206,7 +211,8 @@ def solve(puzzle)
   end
 end
 
-# x = get_puzzle 3
+# x = get_puzzle "evil"
+x = get_puzzle 3
 
 # @test_puzzle = {}
 # @test = "4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......".gsub(".","0").split('')
@@ -215,11 +221,11 @@ end
 # end
 
 
-# @recursions = 0
-# # print_puzzle(deterministic_solve(@test_puzzle))
-# #
+@recursions = 0
+# print_puzzle(deterministic_solve(@test_puzzle))
+# # p list_moves x
 # puts
 
-# solve x
-# puts "Recursions: #{@recursions}"
+solve x
+puts "Recursions: #{@recursions}"
 

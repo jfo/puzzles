@@ -177,6 +177,7 @@ def make_move(puzzle, move)
 
   if dead_puzzle?(puzzle)
     # "Dead puzzle!"
+    @recursions += 1
     raise BackTrack
   end
 
@@ -220,12 +221,11 @@ x = get_puzzle 3
 #   @test_puzzle[i] = @test.shift.to_i
 # end
 
-
-@recursions = 0
 # print_puzzle(deterministic_solve(@test_puzzle))
 # # p list_moves x
 # puts
 
+@recursions = 0
 solve x
 puts "Recursions: #{@recursions}"
 

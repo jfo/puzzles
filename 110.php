@@ -30,9 +30,6 @@ function tick($world) {
         }
     }
 
-    // var_dump($world);
-    // var_dump($next_generation);
-
     return $next_generation;
 }
 
